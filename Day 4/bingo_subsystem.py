@@ -2,10 +2,10 @@ import numpy as np
 
 
 def check_number(bingo_board_state, spots, picked_number):
-    for board_num in bingo_board_state:
-        for row in board_num:
-            for element in row:
-                if element == picked_number:
+    for board_num in range(len(bingo_board_state)):
+        for row in range(board_num):
+            for element in range(row):
+                if bingo_board_state[board_num][row][element] == picked_number:
                     spots[board_num][row][element] = 1
 
 
@@ -44,14 +44,14 @@ for i in data:
     bingo_spots.append(np.zeros((5, 5)))
 
 count = 0
+print(numbers)
 
 for i in numbers:
     # if count > 4:
     # check_cols(spots=bingo_spots)
     # check_rows(spots=bingo_spots)
-    # check_number(boards, bingo_spots, i)
+    check_number(boards, bingo_spots, i)
     count = count + 1
 
-print(numbers)
 print(boards)
 print(bingo_spots)
