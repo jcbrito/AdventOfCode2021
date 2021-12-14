@@ -81,7 +81,6 @@ for i in numbers:
     check_number(boards, bingo_spots, i)
     count = count + 1
 
-
 if winner_rows[2]:
     print(winner_rows)
     print(bingo_spots[winner_rows[0]])
