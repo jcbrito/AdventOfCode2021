@@ -1,4 +1,3 @@
-import numpy
 import numpy as np
 
 
@@ -11,7 +10,6 @@ def check_number(bingo_board_state, spots, picked_number):
 
 
 def check_rows(spots):
-    found = False
     for board_num in range(len(spots)):
         for row in range(len(spots[0])):
             if spots[board_num][row][0] == 1 and spots[board_num][row][1] == 1 and spots[board_num][row][2] == 1 and \
@@ -21,7 +19,6 @@ def check_rows(spots):
 
 
 def check_cols(spots):
-    found = False
     for board_num in range(len(spots)):
         for col in range(len(spots[0])):
             if spots[board_num][0][col] == 1 and spots[board_num][1][col] == 1 and spots[board_num][2][col] == 1 and \
@@ -31,7 +28,7 @@ def check_cols(spots):
 
 
 def sum_unmarked(bingo_board, marked):
-    total_marked = sum(sum(boards[winner_rows[0]]))
+    total_marked = sum(sum(bingo_board))
 
     for row in range(len(marked)):
         for element in range(len(marked[row])):
@@ -46,6 +43,8 @@ data = open("inputs.txt")
 numbers = list(map(int, data.readline().split(',')))
 boards = list()
 bingo_spots = list()
+last_winner = list()
+last_winner_spots = list()
 
 for i in data:
     boards.append(np.array([list(map(int, data.readline().split())),
@@ -59,41 +58,40 @@ for i in data:
 
 count = 0
 last_called_index = 0
-print(numbers)
+print(sorted(numbers))
 
-for i in range(len(boards)):
-    print()
-winner_rows = [0, 0, False]
-winner_cols = [0, 0, False]
+print(len(boards))
 for i in numbers:
+    if len(boards) == 0:
+        break
 
+    check_number(boards, bingo_spots, i)
     print("Looking for {0}".format(i))
+
     if count > 4:
         winner_rows = check_rows(bingo_spots)
         winner_cols = check_cols(bingo_spots)
 
-    if winner_rows[2]:
-        break
 
-    elif winner_cols[2]:
-        break
+    while True:
+        winner_rows = check_rows(bingo_spots)
+        if not winner_rows[2]:
+            break
+        print("Board {0} has won".format(winner_rows[0]))
+        last_winner.append(boards.pop(winner_rows[0]))
+        last_winner_spots.append(bingo_spots.pop(winner_rows[0]))
 
-    check_number(boards, bingo_spots, i)
+    while True:
+        winner_cols = check_cols(bingo_spots)
+        if not winner_cols[2]:
+            break
+        print("Board {0}".format(winner_cols[0]))
+        last_winner.append(boards.pop(winner_cols[0]))
+        last_winner_spots.append(bingo_spots.pop(winner_cols[0]))
+
     count = count + 1
 
-if winner_rows[2]:
-    print(winner_rows)
-    print(bingo_spots[winner_rows[0]])
-    total = 0
-    for val in boards[winner_rows[0]][winner_rows[1]]:
-        total = total + val
-    print(sum_unmarked(boards[winner_rows[0]], bingo_spots[winner_rows[0]]) * numbers[count-1])
-
-elif winner_cols[2]:
-    print(winner_rows)
-    print(bingo_spots[winner_rows[0]])
-    total = 0
-    for val in boards[winner_rows[0]][winner_rows[1]]:
-        total = total + val
-    print(sum_unmarked(boards[winner_rows[0]], bingo_spots[winner_rows[0]]) * numbers[count-1])
-
+total = 0
+for val in last_winner[0]:
+    total = total + val
+print(sum_unmarked(last_winner[-1], last_winner_spots[-1]) * numbers[count-1])
