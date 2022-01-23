@@ -1,22 +1,21 @@
 import numpy as np
+import re
 f = open("inputs.txt")
 
 coordinates = list()
-for line in f:
-    #print("[{0},{1}] [{2},{3}]".format(line[0], line[2], line[7], line[9]))
-    coordinates.append([list([line[0], line[2]]), list([line[7], line[9]])])
 
-largest = max(coordinates)
-largest = max(largest)
-largest = max(largest)
-board = np.zeros((int(largest) + 1, int(largest) + 1))
+for line in f:
+    coordinates.append([int(s) for s in re.findall(r'\d+', line)])
+print(coordinates)
+largest = np.max(coordinates)
+
+board = np.zeros((int(largest + 1), int(largest + 1)))
 
 for coordinate in coordinates:
-    x1 = int(coordinate[0][0])
-    x2 = int(coordinate[1][0])
-    y1 = int(coordinate[0][1])
-    y2 = int(coordinate[1][1])
-    # print("({0},{1}) , ({2},{3})".format(x1, y1, x2, y2))
+    x1 = int(coordinate[0])
+    y1 = int(coordinate[1])
+    x2 = int(coordinate[2])
+    y2 = int(coordinate[3])
 
     if x1 == x2:
 
@@ -34,7 +33,12 @@ for coordinate in coordinates:
         for start in range(start, end + 1):
             board[y1][start] = board[y1][start] + 1
 
-print(board)
+# print(board)
+count = 0
+for x in board:
+    count += len([i for i in x if i > 1])
+
+print("Number of areas to avoid: {0}".format(count))
 
 
 
